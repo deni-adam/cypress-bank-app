@@ -2,7 +2,7 @@ import { UserApi } from "../api/users_api";
 
 describe("create users account with API", () => {
   beforeEach(() => {
-    cy.visit("https://tegb-frontend-88542200c6db.herokuapp.com/");
+    // cy.visit("https://tegb-frontend-88542200c6db.herokuapp.com/");
   });
 
   it("create account", () => {
