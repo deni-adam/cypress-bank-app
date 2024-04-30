@@ -46,9 +46,11 @@ describe("register new user, create users account with API, login and edit users
       const accessTokenValue = response.body.access_token;
       cy.setCookie("access_token", accessTokenValue);
       cy.log(accessTokenValue);
-      userApi.createAccount(1000, accessTokenValue).then((response) => {
-        expect(response.status).to.eq(201);
-      });
+      userApi
+        .createAccount(1000, "testovaci ucet", accessTokenValue)
+        .then((response) => {
+          expect(response.status).to.eq(201);
+        });
     });
 
     new LoginPage()
@@ -68,7 +70,7 @@ describe("register new user, create users account with API, login and edit users
       .clickSaveChangesButton();
   });
 
-  // TODO intercepty
-  // TODO kontrola vyplnenych uzivatelskych udaju a noveho accountu
+  // TODO intercepty, odstranit waity
+  // TODO kontrola vyplnenych uzivatelskych udaju a noveho accountu - custom el.??
   // TODO odhlaseni
 });

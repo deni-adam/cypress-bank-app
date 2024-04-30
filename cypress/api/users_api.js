@@ -1,5 +1,5 @@
 export class UserApi {
-  createAccount(balance, access_token) {
+  createAccount(balance, accountType, access_token) {
     return cy.request({
       method: "POST",
       url: "https://tegb-backend-877a0b063d29.herokuapp.com/tegb/accounts/create",
@@ -8,7 +8,7 @@ export class UserApi {
       },
       body: {
         startBalance: balance,
-        type: "sporak",
+        type: accountType,
       },
     });
   }
