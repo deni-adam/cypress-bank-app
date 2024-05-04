@@ -32,6 +32,14 @@ export const customElement = (selector) => {
       cy.get(selector).scrollIntoView();
       return element;
     },
+    XPathIsVisible() {
+      cy.xpath(selector).should("be.visible");
+      return element;
+    },
+    XPathHasText(text) {
+      cy.xpath(selector).should("have.text", text);
+      return element;
+    },
     get() {
       return cy.get(selector);
     },

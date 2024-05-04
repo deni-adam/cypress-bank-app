@@ -2,7 +2,7 @@ export class UserApi {
   createAccount(balance, accountType, access_token) {
     return cy.request({
       method: "POST",
-      url: "https://tegb-backend-877a0b063d29.herokuapp.com/tegb/accounts/create",
+      url: Cypress.env("tegb_api_url") + "/tegb/accounts/create",
       headers: {
         authorization: "Bearer " + access_token,
       },
@@ -16,7 +16,7 @@ export class UserApi {
   login(username, password) {
     return cy.request({
       method: "POST",
-      url: "https://tegb-backend-877a0b063d29.herokuapp.com/tegb/login",
+      url: Cypress.env("tegb_api_url") + "/tegb/login",
       body: {
         username: username,
         password: password,

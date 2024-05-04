@@ -33,5 +33,4 @@ export class RegistrationPage {
     cy.get(this.goBackButton).click();
     return new LoginPage();
   }
-
 }

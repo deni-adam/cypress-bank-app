@@ -2,14 +2,16 @@ import accountsData from "../fixtures/account_balance_data.json";
 import { faker } from "@faker-js/faker";
 import { LoginPage } from "../page-objects/login_page";
 import { UserApi } from "../api/users_api";
+import { HomePage } from "../page-objects/home_page";
 
 describe("create accounts and check accounting balances", () => {
   let username = faker.internet.userName();
   let password = faker.internet.password();
   let email = faker.internet.exampleEmail();
 
-  beforeEach(() => {
-    // TODO registraci a login potrebuji jen jednou - nahradit beforeEach jen beforem?
+  before(() => {
+    cy.intercept("/tegb/register").as("registration_loading");
+
     new LoginPage()
       .openTegBUrl()
       .clickRegistrationButton()
@@ -18,16 +20,15 @@ describe("create accounts and check accounting balances", () => {
       .typeEmail(email)
       .clickRegisterButton();
 
-    // TODO nahradit waity intercepty, pokud lze
-    cy.wait(20000);
+    cy.wait("@registration_loading");
+  });
 
+  beforeEach(() => {
     new LoginPage()
       .openTegBUrl()
       .typeUsername(username)
       .typePassword(password)
       .clickLoginButton();
-
-    cy.wait(7000);
   });
 
   accountsData.forEach((accountData) => {
@@ -46,16 +47,15 @@ describe("create accounts and check accounting balances", () => {
           accessTokenValue
         );
 
+        cy.intercept("/tegb/accounts").as("accounts_loading");
         cy.reload();
-        cy.wait(7000);
-        cy.get(
-          `[data-testid="account-row-${accountData.row}"] [data-testid="account-balance"]`
-        ).should("have.text", `${Number(accountData.balance).toFixed(2)} Kč`);
-      });
+        cy.wait("@accounts_loading");
 
-      // TODO kontrola vytvoreneho uctu - predelat? vhodnejsi selektor (napr. pomoci row a dedicnosti?)? nejak nahradit posledni get?
+        new HomePage().checkListOfAccounts(
+          accountData.row,
+          accountData.balance
+        );
+      });
     });
   });
-
-  // TODO kdy pouzivat context - treba tu registraci??
 });

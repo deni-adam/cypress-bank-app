@@ -11,6 +11,7 @@ describe("register new user, create users account with API, login and edit users
   let lastname;
   let phone;
   let age;
+  let balance;
 
   beforeEach(() => {
     new LoginPage().openTegBUrl();
@@ -27,9 +28,17 @@ describe("register new user, create users account with API, login and edit users
       max: 100,
     });
     phone = faker.phone.number();
+    balance = faker.number.int({
+      min: 1000,
+      max: 1000000,
+    });
+
     cy.log(username);
     cy.log(password);
     cy.log(email);
+
+    cy.intercept("/tegb/register").as("registration_loading");
+
     new LoginPage()
       .clickRegistrationButton()
       .typeUsername(username)
@@ -37,7 +46,7 @@ describe("register new user, create users account with API, login and edit users
       .typeEmail(email)
       .clickRegisterButton();
 
-    cy.wait(30000);
+    cy.wait("@registration_loading");
 
     const userApi = new UserApi();
     userApi.login(username, password).as("login_response");
@@ -47,18 +56,22 @@ describe("register new user, create users account with API, login and edit users
       cy.setCookie("access_token", accessTokenValue);
       cy.log(accessTokenValue);
       userApi
-        .createAccount(1000, "testovaci ucet", accessTokenValue)
+        .createAccount(balance, "testovaci ucet", accessTokenValue)
         .then((response) => {
           expect(response.status).to.eq(201);
         });
     });
+
+    cy.intercept("/tegb/profile").as("profile_loading");
+    cy.intercept("/tegb/accounts").as("accounts_loading");
 
     new LoginPage()
       .typeUsername(username)
       .typePassword(password)
       .clickLoginButton();
 
-    cy.wait(15000);
+    cy.wait("@profile_loading");
+    cy.wait("@accounts_loading");
 
     new HomePage()
       .clickEditProfileButton()
@@ -67,10 +80,14 @@ describe("register new user, create users account with API, login and edit users
       .typeEmail(email)
       .typePhone(phone)
       .typeAge(age)
-      .clickSaveChangesButton();
+      .clickSaveChangesButton()
+      .userFirstnameHasText(firstname)
+      .userLastnameHasText(lastname)
+      .userPhoneHasText(phone)
+      .userEmailHasText(email)
+      .userAgeHasText(age)
+      .accountBalanceHasText(balance)
+      .accountTypeHasText("testovaci ucet")
+      .clickLogoutButton();
   });
-
-  // TODO intercepty, odstranit waity
-  // TODO kontrola vyplnenych uzivatelskych udaju a noveho accountu - custom el.??
-  // TODO odhlaseni
 });

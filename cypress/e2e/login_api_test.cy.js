@@ -1,21 +1,22 @@
 import { UserApi } from "../api/users_api";
+import { LoginPage } from "../page-objects/login_page";
 
 describe("create users account with API", () => {
   beforeEach(() => {
-    // cy.visit("https://tegb-frontend-88542200c6db.herokuapp.com/");
+    new LoginPage().openTegBUrl();
   });
 
   it("create account", () => {
+    let username = Cypress.env("tegb_username");
+    let password = Cypress.env("tegb_password");
+
     const userApi = new UserApi();
-    userApi.login("User124", "tajneheslo").as("login_response");
+
+    userApi.login(username, password).as("login_response");
     cy.get("@login_response").then((response) => {
-    //   expect(response.status).to.eq(201);
-      const accessTokenValue = response.body.access_token;
-      cy.setCookie("access_token", accessTokenValue);
-      cy.log(accessTokenValue);
-      userApi.createAccount(1000, accessTokenValue).then((response) => {
-        expect(response.status).to.eq(201);
-      });
+      expect(response.status).to.eq(201);
+      cy.log(response.body.access_token);
+      cy.wrap(response).its('body.access_token').should("exist");
     });
   });
 });

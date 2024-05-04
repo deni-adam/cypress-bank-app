@@ -1,12 +1,16 @@
+import { customElement } from "../helpers/custom_element";
 import { LoginPage } from "./login_page";
 
 export class HeaderSection {
   constructor() {
-    this.logoutButton = ".logout-link";
+    this.logo = customElement('[data-testid="logo-img"]');
+    this.title = customElement(".app-title");
+    this.logoutButton = customElement(".logout-link");
   }
 
+
   clickLogoutButton() {
-    cy.get(this.logoutButton).click();
+    this.logoutButton.get().click();
     return new LoginPage();
   }
 }
