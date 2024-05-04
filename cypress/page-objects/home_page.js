@@ -36,7 +36,7 @@ export class HomePage extends HeaderSection {
 
   checkListOfAccounts(accountNo, accountBalance) {
     cy.get(
-      `[data-testid="account-row-${accountNo}"][data-testid="account-balance"]`
+      `[data-testid="account-row-${accountNo}"] [data-testid="account-balance"]`
     ).should("have.text", `${Number(accountBalance).toFixed(2)} Kč`);
   }
 

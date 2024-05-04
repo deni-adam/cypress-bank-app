@@ -47,10 +47,8 @@ describe("create accounts and check accounting balances", () => {
           accessTokenValue
         );
 
-        cy.intercept("/tegb/accounts").as("accounts_loading");
         cy.reload();
-        cy.wait("@accounts_loading");
-
+  
         new HomePage().checkListOfAccounts(
           accountData.row,
           accountData.balance
